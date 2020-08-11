@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
+        integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"
+        integrity="sha512-v8ng/uGxkge3d1IJuEo6dJP8JViyvms0cly9pnbfRxT6/31c3dRWxIiwGnMSWwZjHKOuY3EVmijs7k1jz/9bLA=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <a href="javascript:;" onclick="print()">Print text</a> |
+    <a href="javascript:;" onclick="printPdf()">Print pdf</a>
+
+    <script>
+        var socket = io('ws://localhost:8001');
+
+        function print() {
+            socket.emit('print', {
+                content: 'lorem ipsum dolor',
+                type: 'TEXT'
+            });
+        }
+
+        function printPdf() {
+            var fileName = 'http://127.0.0.1:5500/test.pdf'
+            axios.get(fileName, { responseType: 'arraybuffer' }).then(response => {
+                socket.emit('print', {
+                    content: response.data,
+                    fileName: fileName,
+                    type: 'PDF'
+                });
+            })
+        }
+    </script>
+</body>
+
+</html>
