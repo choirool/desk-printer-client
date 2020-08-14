@@ -18,54 +18,62 @@ export default class Printer {
 
   print(payload = null) {
     if (payload) {
-      let content;
       if (payload.type.toUpperCase() == 'TEXT') {
-        content = payload.content
-        printer.printDirect({
-          data: content,
-          printer: null,
-          type: payload.type.toUpperCase(),
-          success: function (jobID) {
-            console.log("sent to printer with ID: " + jobID);
-          },
-          error: function (err) { console.log(err); }
-        });
+        this.printRawText(payload.content)
       }
 
       if (payload.type.toUpperCase() == 'PDF') {
-        const fileName = Math.random().toString(36).substring(2, 15)
-        let filePath = path.join(__dirname, `Temp/${fileName}.pdf`)
-        const buffer = Buffer.from(payload.content.buffer)
-        const permission = 438
-        let fileDescriptor
+        this.printPDF(payload.content)
+      }
 
-        try {
-          fileDescriptor = fs.openSync(filePath, 'w', permission)
-        } catch (e) {
-          fs.chmodSync(filePath, permission);
-          fileDescriptor = fs.openSync(filePath, 'w', permission)
-        }
-
-        if (fileDescriptor) {
-          fs.writeSync(fileDescriptor, buffer, 0, buffer.length, 0)
-          fs.closeSync(fileDescriptor)
-
-          setTimeout(() => {
-            printer.printFile({
-              // filename: path.join(__dirname, `Temp/test.pdf`),
-              filename: filePath,
-              printer: process.env[3], // printer name, if missing then will print to default printer
-              success: jobID => {
-                console.log("sent to printer with ID: " + jobID);
-                fs.unlink(filePath, (err) => console.log(err))
-              },
-              error: err => {
-                console.log(err);
-              }
-            });
-          }, 1000);
-        }
+      if (payload.type.toUpperCase() == 'TXT') {
+        this.printTxtFile(payload.content)
       }
     }
+  }
+
+  printFile(base64Data, ext) {
+    const fileName = Math.random().toString(36).substring(2, 15)
+    let filePath = path.join(__dirname, `Temp/${fileName}.${ext}`)
+
+    fs.writeFile(filePath, base64Data, 'base64', (err) => {
+      if (err) {
+        console.log(filePath, "\n\n\n\n\n Can not write to above file:\n\n", err);
+      } else {
+        printer.printFile({
+          filename: filePath,
+          printer: process.env[3], // printer name, if missing then will print to default printer
+          success: jobID => {
+            console.log("sent to printer with ID: " + jobID);
+            fs.unlink(filePath, (err) => console.log(err))
+          },
+          error: err => {
+            console.log(err)
+          }
+        })
+      }
+    })
+  }
+
+  printPDF(content) {
+    const base64Data = content.replace(/^data:application\/pdf;base64,/, '')
+    this.printFile(base64Data, 'pdf')
+  }
+
+  printTxtFile(content) {
+    const base64Data = content.replace(/^data:text\/plain;base64,/, '')
+    this.printFile(base64Data, 'txt')
+  }
+
+  printRawText(content) {
+    printer.printDirect({
+      data: content,
+      printer: null,
+      type: 'TEXT',
+      success: function (jobID) {
+        console.log("sent to printer with ID: " + jobID);
+      },
+      error: function (err) { console.log(err); }
+    });
   }
 }

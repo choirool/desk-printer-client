@@ -18,28 +18,56 @@
 </head>
 
 <body>
-    <a href="javascript:;" onclick="print()">Print text</a> |
-    <a href="javascript:;" onclick="printPdf()">Print pdf</a>
+    <a href="javascript:;" onclick="printRawText()">Print text raw</a> |
+    <a href="javascript:;" onclick="printTxtFile()">Print txt file</a> |
+    <a href="javascript:;" onclick="printPdf()">Print pdf</a> |
 
     <script>
         var socket = io('ws://localhost:8001');
 
-        function print() {
+        function printRawText() {
             socket.emit('print', {
-                content: 'lorem ipsum dolor',
+                content: 'lorem ipsum dolor\nlorm ipsum',
                 type: 'TEXT'
             });
         }
 
+        function printTxtFile() {
+            var fileName = 'http://127.0.0.1:5500/test.txt';
+
+            axios.get(fileName, { responseType: 'blob' }).then(response => {
+                var base64data;
+                var reader = new window.FileReader();
+                reader.readAsDataURL(response.data);
+
+                reader.onloadend = function () {
+                    base64data = reader.result;
+                    socket.emit('print', {
+                        content: base64data,
+                        fileName: fileName,
+                        type: 'TXT'
+                    });
+                };
+            });
+        }
+
         function printPdf() {
-            var fileName = 'http://127.0.0.1:5500/test.pdf'
-            axios.get(fileName, { responseType: 'arraybuffer' }).then(response => {
-                socket.emit('print', {
-                    content: response.data,
-                    fileName: fileName,
-                    type: 'PDF'
-                });
-            })
+            var fileName = 'http://127.0.0.1:5500/test.pdf';
+
+            axios.get(fileName, { responseType: 'blob' }).then(response => {
+                var base64data;
+                var reader = new window.FileReader();
+                reader.readAsDataURL(response.data);
+
+                reader.onloadend = function () {
+                    base64data = reader.result;
+                    socket.emit('print', {
+                        content: base64data,
+                        fileName: fileName,
+                        type: 'PDF'
+                    });
+                };
+            });
         }
     </script>
 </body>
