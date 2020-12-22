@@ -49,6 +49,7 @@
     "@thiagoelg/node-printer": "^0.5.3",
     "electron-compile": "^6.4.4",
     "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^6.0.1",
     "socket.io": "^2.3.0",
     "vue": "^2.6.12"
   },
@@ -59,9 +60,10 @@
     "electron-forge": "^5.2.4",
     "electron-prebuilt-compile": "8.2.0",
     "eslint": "^3.19.0",
+    "vue-template-compiler": "^2.6.12",
     "eslint-config-airbnb": "^15.1.0",
-    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^5.1.1",
-    "eslint-plugin-react": "^7.20.6"
+    "eslint-plugin-react": "^7.21.5"
   }
 }

@@ -42,7 +42,8 @@ export default class Printer {
       } else {
         printer.printFile({
           filename: filePath,
-          printer: process.env[3], // printer name, if missing then will print to default printer
+          // printer: process.env[3], // printer name, if missing then will print to default printer
+          printer: 'Boomaga', // printer name, if missing then will print to default printer
           success: jobID => {
             console.log("sent to printer with ID: " + jobID);
             fs.unlink(filePath, (err) => console.log(err))
@@ -68,7 +69,7 @@ export default class Printer {
   printRawText(content) {
     printer.printDirect({
       data: content,
-      printer: null,
+      printer: 'Boomaga',
       type: 'TEXT',
       success: function (jobID) {
         console.log("sent to printer with ID: " + jobID);
