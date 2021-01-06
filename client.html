@@ -23,7 +23,11 @@
     <a href="javascript:;" onclick="printPdf()">Print pdf</a> |
 
     <script>
-        var socket = io('ws://localhost:8001');
+        var key = 'lZAkblsnBURl'
+        var port = 1811
+        var socket = io(`ws://localhost:${port}`, {
+            query: `token=${key}`,
+        });
 
         function printRawText() {
             socket.emit('print', {

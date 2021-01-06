@@ -2,8 +2,7 @@ import EventEmitter from 'events'
 import HTTP from 'http'
 import Socket from 'socket.io'
 import Printer from './printer.js'
-import fs from 'fs'
-import path from 'path'
+import { CFG } from "./config.js";
 
 export default class Service extends EventEmitter {
   constructor() {
@@ -18,18 +17,19 @@ export default class Service extends EventEmitter {
 
     this.io = new Socket(this.http);
     this.io.use((socket, next) => {
-      // const token = socket.handshake.query.token;
-      // const appkey = CFG.get('app.key');
+      const token = socket.handshake.query.token;
+      const appkey = CFG.get('app.key');
 
-      // if (token !== appkey) {
-      //   return next(new Error('Not Authorized'));
-      // }
+      if (token !== appkey) {
+        this.io.emit('message', {'err': 'Not Authorized'})
+        return next(new Error('Not Authorized'));
+      }
 
       return next();
     });
     this.io.on('connection', (socket) => {
       socket.on('message', (data) => {
-        this.emit('message', data);
+        this.io.emit('message', data);
       });
 
       socket.on('print', (payload) => {
@@ -40,7 +40,7 @@ export default class Service extends EventEmitter {
 
   start() {
     return new Promise((resolve, reject) => {
-      this.http.listen(8001, () => {
+      this.http.listen(CFG.get('app.port'), () => {
         return resolve();
       }).once('error', error => reject(error));
     });

@@ -1,15 +1,16 @@
 <template>
   <div>
     <div v-if="config">
-      <div>{{ config.app.name }}</div>
-      <select v-model="selectedPrinter" @change="printerSelected($event)">
+      <div>App key: {{ config.app.key }}</div>
+      <div>App port: {{ config.app.port }}</div>
+      Selected printer: <select v-model="selectedPrinter" @change="printerSelected($event)">
         <option v-for="(printer, i) in printerList" :key="i" :value="JSON.stringify(printer)">
           {{ printer.name }} - {{ printer.status }}
         </option>
       </select>
     </div>
     <div>
-      <button @click="printFile">Print file</button>
+      <button @click="testPrinter">Tes printer</button>
       <button @click="start" v-if="!isStart">Start</button>
       <button @click="stop" v-else>Stop</button>
     </div>
@@ -37,9 +38,10 @@ export default {
     this.printerList = this.printer.getPrinters();
     this.config = CFG.get();
     this.selectedPrinter = JSON.stringify(this.config.printer)
+    this.start()
   },
   methods: {
-    printFile() {
+    testPrinter() {
       this.printer.print({
         content: 'lorem',
         type: 'TEXT',

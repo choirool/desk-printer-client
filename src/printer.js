@@ -3,7 +3,8 @@ import fs from 'fs'
 import path from 'path'
 import { CFG } from './config.js'
 
-let selectedPrinter = CFG.get('printer')
+// Set selected printer to default printer
+let selectedPrinter = printer.getDefaultPrinterName()
 export default class Printer {
   constructor(options = {}) {
     this.printer = printer
@@ -19,6 +20,7 @@ export default class Printer {
   }
 
   print(payload = null) {
+    // Replace selected printer with value from config (electron-store)
     selectedPrinter = CFG.get('printer')
     if (payload) {
       if (payload.type.toUpperCase() == 'TEXT') {
