@@ -1,6 +1,6 @@
 import EventEmitter from 'events'
 import HTTP from 'http'
-import Socket from 'socket.io'
+import { Server } from 'socket.io'
 import Printer from './printer.js'
 import { CFG } from "./config.js";
 
@@ -15,7 +15,11 @@ export default class Service extends EventEmitter {
     this.http.setTimeout(1000);
     this.files = {}
 
-    this.io = new Socket(this.http);
+    this.io = new Server(this.http, {
+      cors: {
+        origin: '*'
+      }
+    });
     this.io.use((socket, next) => {
       const token = socket.handshake.query.token;
       const appkey = CFG.get('app.key');

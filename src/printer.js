@@ -2,6 +2,7 @@ import printer from '@thiagoelg/node-printer'
 import fs from 'fs'
 import path from 'path'
 import { CFG } from './config.js'
+const { app } = require("electron").remote;
 
 // Set selected printer to default printer
 let selectedPrinter = printer.getDefaultPrinterName()
@@ -39,7 +40,7 @@ export default class Printer {
 
   printFile(base64Data, ext) {
     const fileName = Math.random().toString(36).substring(2, 15)
-    let filePath = path.join(__dirname, `Temp/${fileName}.${ext}`)
+    let filePath = path.join(app.getPath("temp"), `${fileName}.${ext}`)
 
     fs.writeFile(filePath, base64Data, 'base64', (err) => {
       if (err) {

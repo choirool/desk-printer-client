@@ -1,11 +1,11 @@
 {
-  "name": "electron-printer",
-  "productName": "electron-printer",
+  "name": "printer-desk-host",
+  "productName": "Printer desk host",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": "src/index.js",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "NODE_ENV=development electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
@@ -28,7 +28,8 @@
         ]
       },
       "electronPackagerConfig": {
-        "packageManager": "npm"
+        "packageManager": "npm",
+        "icon": "./src/assets/icon"
       },
       "electronWinstallerConfig": {
         "name": "electron_printer"
@@ -51,7 +52,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^6.0.1",
     "randomstring": "^1.1.5",
-    "socket.io": "^2.3.0",
+    "socket.io": "^3.0.5",
     "vue": "^2.6.12"
   },
   "devDependencies": {
@@ -61,10 +62,10 @@
     "electron-forge": "^5.2.4",
     "electron-prebuilt-compile": "8.2.0",
     "eslint": "^3.19.0",
-    "vue-template-compiler": "^2.6.12",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^5.1.1",
-    "eslint-plugin-react": "^7.21.5"
+    "eslint-plugin-react": "^7.22.0",
+    "vue-template-compiler": "^2.6.12"
   }
 }

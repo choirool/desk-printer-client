@@ -10,22 +10,31 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 let mainWindow;
 
 const createWindow = () => {
+  let appWidth = 335
+
+  if (process.env.NODE_ENV == 'development') {
+    appWidth = 800
+  }
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: appWidth,
     height: 600,
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
-      enableRemoteModule: true,
+      enableRemoteModule: true
     },
   });
 
+  mainWindow.removeMenu()
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/html/index.html`);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV == 'development') {
+    mainWindow.webContents.openDevTools();
+  }
 
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
