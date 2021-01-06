@@ -1,8 +1,9 @@
 <template>
   <div>
-    <div>
-      <select v-model="printer">
-        <option v-for="(printer, i) in printers" :key="i" :value="printer">
+    <div v-if="config">
+      <div>{{ config.app.name }}</div>
+      <select v-model="selectedPrinter" @change="printerSelected($event)">
+        <option v-for="(printer, i) in printerList" :key="i" :value="JSON.stringify(printer)">
           {{ printer.name }} - {{ printer.status }}
         </option>
       </select>
@@ -18,19 +19,24 @@
 <script>
 import Printer from "../printer.js";
 import Service from "../service.js";
+import { CFG } from "../config.js";
 
 export default {
   data() {
     return {
+      config: null,
       printer: null,
-      printers: null,
+      printerList: null,
+      selectedPrinter: null,
       service: null,
       isStart: false,
     };
   },
   created() {
     this.printer = new Printer();
-    this.printers = this.printer.getPrinters();
+    this.printerList = this.printer.getPrinters();
+    this.config = CFG.get();
+    this.selectedPrinter = JSON.stringify(this.config.printer)
   },
   methods: {
     printFile() {
@@ -58,6 +64,9 @@ export default {
       } catch (e) {
         this.log(e);
       }
+    },
+    printerSelected(e) {
+      CFG.set('printer', JSON.parse(e.target.value));
     }
   },
 };

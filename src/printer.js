@@ -1,7 +1,9 @@
 import printer from '@thiagoelg/node-printer'
 import fs from 'fs'
 import path from 'path'
+import { CFG } from './config.js'
 
+let selectedPrinter = CFG.get('printer')
 export default class Printer {
   constructor(options = {}) {
     this.printer = printer
@@ -17,6 +19,7 @@ export default class Printer {
   }
 
   print(payload = null) {
+    selectedPrinter = CFG.get('printer')
     if (payload) {
       if (payload.type.toUpperCase() == 'TEXT') {
         this.printRawText(payload.content)
@@ -43,7 +46,7 @@ export default class Printer {
         printer.printFile({
           filename: filePath,
           // printer: process.env[3], // printer name, if missing then will print to default printer
-          printer: 'Boomaga', // printer name, if missing then will print to default printer
+          printer: selectedPrinter.name, // printer name, if missing then will print to default printer
           success: jobID => {
             console.log("sent to printer with ID: " + jobID);
             fs.unlink(filePath, (err) => console.log(err))
@@ -69,7 +72,7 @@ export default class Printer {
   printRawText(content) {
     printer.printDirect({
       data: content,
-      printer: 'Boomaga',
+      printer: selectedPrinter.name,
       type: 'TEXT',
       success: function (jobID) {
         console.log("sent to printer with ID: " + jobID);

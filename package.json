@@ -50,6 +50,7 @@
     "electron-compile": "^6.4.4",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^6.0.1",
+    "randomstring": "^1.1.5",
     "socket.io": "^2.3.0",
     "vue": "^2.6.12"
   },
