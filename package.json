@@ -1,8 +1,8 @@
 {
   "name": "printer-desk-host",
-  "productName": "Printer desk host",
+  "productName": "printer-desk-host",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Printer desk host",
   "main": "src/index.js",
   "scripts": {
     "start": "NODE_ENV=development electron-forge start",
@@ -15,40 +15,12 @@
   "author": "choirool",
   "license": "MIT",
   "config": {
-    "forge": {
-      "make_targets": {
-        "win32": [
-          "squirrel"
-        ],
-        "darwin": [
-          "zip"
-        ],
-        "linux": [
-          "deb"
-        ]
-      },
-      "electronPackagerConfig": {
-        "packageManager": "npm",
-        "icon": "./src/assets/icon"
-      },
-      "electronWinstallerConfig": {
-        "name": "electron_printer"
-      },
-      "electronInstallerDebian": {},
-      "electronInstallerRedhat": {},
-      "github_repository": {
-        "owner": "Choirool",
-        "name": "Khoirul Fatihin"
-      },
-      "windowsStoreConfig": {
-        "packageName": "",
-        "name": "electronprinter"
-      }
-    }
+    "forge": "./forge.config.js"
   },
   "dependencies": {
     "@thiagoelg/node-printer": "^0.5.3",
     "electron-compile": "^6.4.4",
+    "electron-positioner": "^4.1.0",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^6.0.1",
     "randomstring": "^1.1.5",

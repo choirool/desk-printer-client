@@ -1,26 +1,33 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu, MenuItem, Tray } from 'electron';
+import path from 'path';
+import Positioner from 'electron-positioner';
+
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let mainWindow;
+let tray;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow;
-
 const createWindow = () => {
   let appWidth = 335
+  let enableRiziseWindow = false
 
   if (process.env.NODE_ENV == 'development') {
-    appWidth = 800
+    // appWidth = 800
+    enableRiziseWindow = true
   }
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: appWidth,
     height: 600,
-    resizable: false,
+    resizable: enableRiziseWindow,
+    title: "Printer desk client",
+    icon: path.join(__dirname, '/assets/icons/png/64x64.png'),
     webPreferences: {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
@@ -28,13 +35,92 @@ const createWindow = () => {
     },
   });
 
-  mainWindow.removeMenu()
+  const positioner = new Positioner(mainWindow);
+  positioner.move('bottomRight');
+
+  const mainMenu = Menu.buildFromTemplate([
+    {
+      label  : 'File',
+      submenu: [
+        {
+          label: 'Minimize to Tray',
+          click () {
+            mainWindow.hide()
+          },
+        },
+        { type: 'separator' },
+        {
+          label: 'Quit',
+          click () {
+            app.isQuiting = true
+            app.quit()
+          },
+        },
+      ],
+    },
+  ])
+
+  if (process.env.NODE_ENV == 'development') {
+    mainMenu.items[0].submenu.insert(1, new MenuItem({ type: 'separator' }))
+    mainMenu.items[0].submenu.insert(2, new MenuItem({
+      label: 'Toggle Developer Tools',
+      role : 'toggledevtools',
+    }))
+  }
+
+  Menu.setApplicationMenu(mainMenu)
+
+  const trayMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show',
+      click () {
+        mainWindow.show()
+      },
+    },
+    { type: 'separator' },
+    {
+      label: 'Start',
+      enabled: false,
+      click () {
+        mainWindow.webContents.send('start')
+      },
+    },
+    {
+      label  : 'Stop',
+      click () {
+        mainWindow.webContents.send('stop')
+      },
+    },
+    { type: 'separator' },
+    {
+      label: 'Quit',
+      click () {
+        app.isQuiting = true
+        app.quit()
+      },
+    },
+  ])
+
+  const ICON = (() => {
+    const icons = {
+      linux: './assets/icons/png/64x64.png',
+      win32: './assets/icons/win/icon.ico',
+    }
+  
+    return icons[process.platform]
+  })()
+
+  tray = new Tray(path.join(__dirname, ICON))
+  tray.setToolTip('Recta Print')
+  tray.setContextMenu(trayMenu)
+
+  // mainWindow.removeMenu()
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/html/index.html`);
 
   // Open the DevTools.
   if (process.env.NODE_ENV == 'development') {
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
   }
 
   // Emitted when the window is closed.
@@ -46,10 +132,21 @@ const createWindow = () => {
   });
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+
+  app.on('ready', createWindow);
+}
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

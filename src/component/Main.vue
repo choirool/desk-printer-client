@@ -11,8 +11,8 @@
     </div>
     <div>
       <button @click="testPrinter">Tes printer</button>
-      <button @click="start" v-if="!isStart">Start</button>
-      <button @click="stop" v-else>Stop</button>
+      <button @click="start" v-if="!isStart">Start service</button>
+      <button @click="stop" v-else>Stop service</button>
     </div>
   </div>
 </template>
