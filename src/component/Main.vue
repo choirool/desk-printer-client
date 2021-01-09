@@ -21,6 +21,7 @@
 import Printer from "../printer.js";
 import Service from "../service.js";
 import { CFG } from "../config.js";
+import { ipcRenderer } from 'electron';
 
 export default {
   data() {
@@ -39,6 +40,13 @@ export default {
     this.config = CFG.get();
     this.selectedPrinter = JSON.stringify(this.config.printer)
     this.start()
+
+    ipcRenderer.on('start', () => {
+      this.start()
+    })
+    ipcRenderer.on('stop', () => {
+      this.stop()
+    })
   },
   methods: {
     testPrinter() {
@@ -71,5 +79,14 @@ export default {
       CFG.set('printer', JSON.parse(e.target.value));
     }
   },
+  watch: {
+    isStart (val) {
+      if (val) {
+        ipcRenderer.send('started');
+      } else {
+        ipcRenderer.send('stoped');
+      }
+    },
+  }
 };
 </script>

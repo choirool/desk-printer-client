@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, MenuItem, Tray } from 'electron';
+import { app, BrowserWindow, Menu, MenuItem, Tray, ipcMain } from 'electron';
 import path from 'path';
 import Positioner from 'electron-positioner';
 
@@ -112,7 +112,7 @@ const createWindow = () => {
   })()
 
   tray = new Tray(path.join(__dirname, ICON))
-  tray.setToolTip('Recta Print')
+  tray.setToolTip('Printer desk host')
   tray.setContextMenu(trayMenu)
 
   // mainWindow.removeMenu()
@@ -131,6 +131,20 @@ const createWindow = () => {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  ipcMain.on('started', () => {
+    trayMenu.items[2].enabled = false
+    trayMenu.items[3].enabled = true
+
+    tray.setContextMenu(trayMenu)
+  })
+
+  ipcMain.on('stoped', () => {
+    trayMenu.items[2].enabled = true
+    trayMenu.items[3].enabled = false
+
+    tray.setContextMenu(trayMenu)
+  })
 };
 
 const gotTheLock = app.requestSingleInstanceLock()
