@@ -26,7 +26,7 @@ module.exports = {
       '^/node_modules/\\.cache'
     ],
     appCopyright : 'Copyright (C) 2020 Choirool.',
-    icon         : 'src/assets/icons/win/icon.ico',
+    icon         : 'src/assets/icons/mac/icon.icns',
     // win32metadata: {
     //   CompanyName     : 'Choirool',
     //   FileDescription : '',
