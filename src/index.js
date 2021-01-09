@@ -105,6 +105,7 @@ const createWindow = () => {
     const icons = {
       linux: './assets/icons/png/64x64.png',
       win32: './assets/icons/win/icon.ico',
+      darwin: './assets/icons/mac/icon.icns'
     }
   
     return icons[process.platform]
