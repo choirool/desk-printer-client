@@ -11,3 +11,5 @@
 # Build app
 
 Run `npm run make`
+
+inspired by https://github.com/adenvt/recta-host
